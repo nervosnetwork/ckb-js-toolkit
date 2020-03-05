@@ -11,7 +11,7 @@ class ArrayBufferReader {
     return this.view.getUint8(i);
   }
 
-  serialize() {
+  serializeJson() {
     return "0x" + Array.prototype.map.call(
       new Uint8Array(this.view.buffer),
       (x) => ("00" + x.toString(16)).slice(-2)
@@ -32,7 +32,7 @@ class HexStringReader {
     return parseInt(this.string.substr(2 + i * 2, 2), 16);
   }
 
-  serialize() {
+  serializeJson() {
     return this.string;
   }
 }
