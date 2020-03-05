@@ -2,9 +2,12 @@
   "name": "ckb-js-toolkit",
   "version": "0.1.0",
   "description": "JavaScript toolkits used to build dapps for Nervos CKB",
-  "main": "src/index.js",
+  "main": "dist/ckb-js-toolkit.node.js",
+  "files": [
+    "dist"
+  ],
   "scripts": {
-    "build-js": "rollup -c rollup.config.node.js"
+    "build": "rollup -c"
   },
   "author": "Xuejie Xiao",
   "license": "MIT",

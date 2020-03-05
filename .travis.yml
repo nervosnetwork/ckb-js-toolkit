@@ -8,5 +8,5 @@ matrix:
     - name: build
       script:
         - npm install
-        - npm run build-js
+        - npm run build
         - git diff --exit-code
