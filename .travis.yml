@@ -10,3 +10,7 @@ matrix:
         - npm install
         - npm run build
         - git diff --exit-code
+    - name: test
+      script:
+        - npm install
+        - npm run test
