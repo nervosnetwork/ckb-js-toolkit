@@ -22,6 +22,13 @@ class ArrayBufferReader {
   indexAt(i) {
     return this.view.getUint8(i);
   }
+
+  serialize() {
+    return "0x" + Array.prototype.map.call(
+      new Uint8Array(this.view.buffer),
+      (x) => ("00" + x.toString(16)).slice(-2)
+    ).join("")
+  }
 }
 
 class HexStringReader {
@@ -30,11 +37,15 @@ class HexStringReader {
   }
 
   length() {
-    return this.string.length / 2;
+    return this.string.length / 2 - 1;
   }
 
   indexAt(i) {
-    return parseInt(this.string.substr(i * 2, 2), 16);
+    return parseInt(this.string.substr(2 + i * 2, 2), 16);
+  }
+
+  serialize() {
+    return this.string;
   }
 }
 
@@ -45,7 +56,7 @@ class Reader {
           (input.length % 2 != 0)) {
         throw new Error("Hex string must start with 0x, and has even numbered length!");
       }
-      return new HexStringReader(input.substr(2));
+      return new HexStringReader(input);
     }
     if (input instanceof ArrayBuffer) {
       return new ArrayBufferReader(input);
