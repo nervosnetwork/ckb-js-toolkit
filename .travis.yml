@@ -9,5 +9,4 @@ matrix:
       script:
         - npm install
         - npm run build-js
-        - npm run build-es
         - git diff --exit-code
