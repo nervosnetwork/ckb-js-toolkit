@@ -1,0 +1,13 @@
+language: node_js
+node_js:
+  - "12"
+dist: bionic
+
+matrix:
+  include:
+    - name: build
+      script:
+        - npm install
+        - npm run build-js
+        - npm run build-es
+        - git diff --exit-code
