@@ -1804,16 +1804,25 @@ function assertObjectWithKeys(object, ...expectedKeys) {
   }
 }
 
-function assertHexString(string, field_name) {
+function assertHexString(string, fieldName) {
   if (!/^0x([0-9a-fA-F][0-9a-fA-F])*$/.test(string)) {
-    throw new Error(`${field_name} must be a hex string!`)
+    throw new Error(`${fieldName} must be a hex string!`)
   }
 }
 
-function assertHash(hash, field_name) {
-  assertHexString(hash, field_name);
+function assertHash(hash, fieldName) {
+  assertHexString(hash, fieldName);
   if (hash.length != 66) {
-    throw new Error(`${field_name} must be a hex string of 66 bytes long!`);
+    throw new Error(`${fieldName} must be a hex string of 66 bytes long!`);
+  }
+}
+
+function assertInteger(i, fieldName) {
+  if (i === "0x0") {
+    return;
+  }
+  if (!/^0x[1-9a-fA-F][0-9a-fA-F]*$/.test(i)) {
+    throw new Error(`${fieldName} must be a hex integer!`)
   }
 }
 
@@ -1827,10 +1836,18 @@ function ValidateScript(script) {
   }
 }
 
-const validators = {
-  ValidateScript
-};
+function ValidateOutPoint(outPoint) {
+  assertObjectWithKeys(outPoint, "tx_hash", "index");
+  assertHash(outPoint.tx_hash, "tx_hash");
+  assertInteger(outPoint.index, "index");
+}
+
+var index = /*#__PURE__*/Object.freeze({
+  __proto__: null,
+  ValidateScript: ValidateScript,
+  ValidateOutPoint: ValidateOutPoint
+});
 
 exports.RPC = RPC;
 exports.Reader = Reader;
-exports.validators = validators;
+exports.validators = index;

@@ -48,3 +48,37 @@ test("script with invalid hash type", t => {
     });
   });
 });
+
+test("correct outpoint", t => {
+  validators.ValidateOutPoint({
+    tx_hash: "0xa98c57135830e1b91345948df6c4b8870828199a786b26f09f7dec4bc27a73da",
+    index: "0x0"
+  });
+  t.pass();
+});
+
+test("correct outpoint with positive number", t => {
+  validators.ValidateOutPoint({
+    tx_hash: "0xa98c57135830e1b91345948df6c4b8870828199a786b26f09f7dec4bc27a73da",
+    index: "0x101"
+  });
+  t.pass();
+});
+
+test("outpoint with zero leaded invalid number", t => {
+  t.throws(() => {
+    validators.ValidateOutPoint({
+      tx_hash: "0xa98c57135830e1b91345948df6c4b8870828199a786b26f09f7dec4bc27a73da",
+      index: "0x010"
+    });
+  });
+});
+
+test("outpoint with invalid hex number", t => {
+  t.throws(() => {
+    validators.ValidateOutPoint({
+      tx_hash: "0xa98c57135830e1b91345948df6c4b8870828199a786b26f09f7dec4bc27a73da",
+      index: "0xgg1"
+    });
+  });
+});
