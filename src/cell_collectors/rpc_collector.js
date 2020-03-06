@@ -3,10 +3,11 @@ import { Reader } from "../reader";
 import { HexStringToBigInt, BigIntToHexString } from "../rpc";
 
 export class RPCCollector {
-  constructor(rpc, lockHash, skipCellWithContent = true) {
+  constructor(rpc, lockHash, { skipCellWithContent = true, loadData = false } = {}) {
     this.rpc = rpc;
     this.lockHash = new Reader(lockHash).serializeJson();
     this.skipCellWithContent = skipCellWithContent;
+    this.loadData = loadData;
   }
 
   async *collect() {
@@ -25,6 +26,11 @@ export class RPCCollector {
                                             JSBI.BigInt(100))) {
             continue;
           }
+          let data = null;
+          if (this.loadData) {
+            const cellWithData = await this.rpc.get_live_cell(cell.out_point, true);
+            data = cellWithData.cell.data.content;
+          }
           yield {
             cell_output: {
               capacity: cell.capacity,
@@ -32,7 +38,8 @@ export class RPCCollector {
               type: cell.type
             },
             out_point: cell.out_point,
-            block_hash: cell.block_hash
+            block_hash: cell.block_hash,
+            data: data
           };
         }
       }
