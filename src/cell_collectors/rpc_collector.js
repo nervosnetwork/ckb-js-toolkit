@@ -25,7 +25,15 @@ export class RPCCollector {
                                             JSBI.BigInt(100))) {
             continue;
           }
-          yield cell;
+          yield {
+            cell_output: {
+              capacity: cell.capacity,
+              lock: cell.lock,
+              type: cell.type
+            },
+            out_point: cell.out_point,
+            block_hash: cell.block_hash
+          };
         }
       }
       currentFrom = JSBI.add(currentTo, JSBI.BigInt(1));
