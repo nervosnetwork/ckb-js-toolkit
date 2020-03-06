@@ -1,4 +1,5 @@
 import fetch from "cross-fetch";
+import JSBI from "jsbi";
 
 const handler = {
   get: (target, method) => {
@@ -33,4 +34,12 @@ export class RPC {
     this.uri = uri;
     return new Proxy(this, handler);
   }
+}
+
+export function HexStringToBigInt(hexString) {
+  return JSBI.BigInt(hexString);
+}
+
+export function BigIntToHexString(bigInt) {
+  return "0x" + bigInt.toString(16);
 }

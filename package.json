@@ -13,7 +13,8 @@
   "author": "Xuejie Xiao",
   "license": "MIT",
   "dependencies": {
-    "cross-fetch": "^3.0.4"
+    "cross-fetch": "^3.0.4",
+    "jsbi": "^3.1.2"
   },
   "devDependencies": {
     "@rollup/plugin-commonjs": "^11.0.2",
