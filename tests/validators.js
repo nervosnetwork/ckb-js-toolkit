@@ -350,3 +350,230 @@ test("correct transaction", t => {
   });
   t.pass();
 });
+
+test("correct header", t => {
+  validators.ValidateHeader({
+    compact_target: "0x1a2d3494",
+    number: "0xfb1bc",
+    parent_hash: "0x3134874027b9b2b17391d2fa545344b10bd8b8c49d9ea47d55a447d01142b21b",
+    nonce: "0x449b385049af131a0000001584a00100",
+    timestamp: "0x170aba663c3",
+    transactions_root: "0x68a83c880eb942396d22020aa83343906986f66418e9b8a4488f2866ecc4e86a",
+    proposals_hash: "0x0000000000000000000000000000000000000000000000000000000000000000",
+    uncles_hash: "0x0000000000000000000000000000000000000000000000000000000000000000",
+    version: "0x0",
+    epoch: "0x7080612000287",
+    dao: "0x40b4d9a3ddc9e730736c7342a2f023001240f362253b780000b6ca2f1e790107"
+  });
+  t.pass();
+});
+
+test("invalid header", t => {
+  t.throws(() => {
+    validators.ValidateHeader({
+      compact_target: "0x1a2d3494",
+      number: "0xfb1bc",
+      parent_hash: "0x3134874027b9b2b17391d2fa545344b10bd8b8c49d9ea47d55a447d01142b21b",
+      nonce: "0x449b385049af131a0000001584a0",
+      timestamp: "0x170aba663c3",
+      transactions_root: "0x68a83c880eb942396d22020aa83343906986f66418e9b8a4488f2866ecc4e86a",
+      proposals_hash: "0x0000000000000000000000000000000000000000000000000000000000000000",
+      uncles_hash: "0x0000000000000000000000000000000000000000000000000000000000000000",
+      version: "0x0",
+      epoch: "0x7080612000287",
+      dao: "0x40b4d9a3ddc9e730736c7342a2f023001240f362253b780000b6ca2f1e790107"
+    });
+  });
+});
+
+test("invalid raw header", t => {
+  t.throws(() => {
+    validators.ValidateRawHeader({
+      compact_target: "0x1a2d3494",
+      number: "0xfb1bc",
+      parent_hash: "0x3134874027b9b2b17391d2fa545344b10bd8b8c49d9ea47d55a447d01142b21b",
+      nonce: "0x449b385049af131a0000001584a00100",
+      timestamp: "0x170aba663c3",
+      transactions_root: "0x68a83c880eb942396d22020aa83343906986f66418e9b8a4488f2866ecc4e86a",
+      proposals_hash: "0x0000000000000000000000000000000000000000000000000000000000000000",
+      uncles_hash: "0x0000000000000000000000000000000000000000000000000000000000000000",
+      version: "0x0",
+      epoch: "0x7080612000287",
+      dao: "0x40b4d9a3ddc9e730736c7342a2f023001240f362253b780000b6ca2f1e790107"
+    });
+  });
+});
+
+test("validate uncle block", t => {
+  validators.ValidateUncleBlock({
+    header: {
+      compact_target: "0x1a2d3494",
+      number: "0xfb1bc",
+      parent_hash: "0x3134874027b9b2b17391d2fa545344b10bd8b8c49d9ea47d55a447d01142b21b",
+      nonce: "0x449b385049af131a0000001584a00100",
+      timestamp: "0x170aba663c3",
+      transactions_root: "0x68a83c880eb942396d22020aa83343906986f66418e9b8a4488f2866ecc4e86a",
+      proposals_hash: "0x0000000000000000000000000000000000000000000000000000000000000000",
+      uncles_hash: "0x0000000000000000000000000000000000000000000000000000000000000000",
+      version: "0x0",
+      epoch: "0x7080612000287",
+      dao: "0x40b4d9a3ddc9e730736c7342a2f023001240f362253b780000b6ca2f1e790107"
+    },
+    proposals: [
+      "0x12345678901234567890",
+      "0xabcdeabcdeabcdeabcde"
+    ]
+  });
+  t.pass();
+})
+
+test("validate invalid uncle block", t => {
+  t.throws(() => {
+    validators.ValidateUncleBlock({
+      header: {
+        compact_target: "0x1a2d3494",
+        number: "0xfb1bc",
+        parent_hash: "0x3134874027b9b2b17391d2fa545344b10bd8b8c49d9ea47d55a447d01142b21b",
+        nonce: "0x449b385049af131a0000001584a00100",
+        timestamp: "0x170aba663c3",
+        transactions_root: "0x68a83c880eb942396d22020aa83343906986f66418e9b8a4488f2866ecc4e86a",
+        proposals_hash: "0x0000000000000000000000000000000000000000000000000000000000000000",
+        uncles_hash: "0x0000000000000000000000000000000000000000000000000000000000000000",
+        version: "0x0",
+        epoch: "0x7080612000287",
+        dao: "0x40b4d9a3ddc9e730736c7342a2f023001240f362253b780000b6ca2f1e790107"
+      },
+      proposals: [
+        "0x12345678901234567890",
+        "0xabcdeabcdeab"
+      ]
+    });
+  });
+})
+
+test("validate invalid uncle block but skips nested validation", t => {
+  validators.ValidateUncleBlock({
+    header: 123123,
+    proposals: [
+      "0x12345678901234567890"
+    ]
+  }, { nestedValidation: false });
+  t.pass();
+})
+
+test("validate block", t => {
+  validators.ValidateBlock({
+    header: {
+      compact_target: "0x1a2d3494",
+      number: "0xfb1bc",
+      parent_hash: "0x3134874027b9b2b17391d2fa545344b10bd8b8c49d9ea47d55a447d01142b21b",
+      nonce: "0x449b385049af131a0000001584a00100",
+      timestamp: "0x170aba663c3",
+      transactions_root: "0x68a83c880eb942396d22020aa83343906986f66418e9b8a4488f2866ecc4e86a",
+      proposals_hash: "0x0000000000000000000000000000000000000000000000000000000000000000",
+      uncles_hash: "0x0000000000000000000000000000000000000000000000000000000000000000",
+      version: "0x0",
+      epoch: "0x7080612000287",
+      dao: "0x40b4d9a3ddc9e730736c7342a2f023001240f362253b780000b6ca2f1e790107"
+    },
+    transactions: [
+      {
+        version: "0x0",
+        cell_deps: [
+          {
+            dep_type: "code",
+            out_point: {
+              tx_hash: "0xa98c57135830e1b91345948df6c4b8870828199a786b26f09f7dec4bc27a7300",
+              index: "0x0"
+            }
+          }
+        ],
+        header_deps: [
+          "0xb39d53656421d1532dd995a0924441ca8f43052bc2b7740a0e814a488a8214d6"
+        ],
+        inputs: [
+          {
+            since: "0x10",
+            previous_output: {
+              tx_hash: "0xa98c57135830e1b91345948df6c4b8870828199a786b26f09f7dec4bc27a7301",
+              index: "0x2"
+            }
+          }
+        ],
+        outputs: [
+          {
+            capacity: "0x1234",
+            lock: {
+              code_hash: "0xa98c57135830e1b91345948df6c4b8870828199a786b26f09f7dec4bc27a7302",
+              args: "0x1234",
+              hash_type: "data"
+            }
+          }
+        ],
+        outputs_data: [
+          "0xabcdef"
+        ],
+        witnesses: [
+          "0x1111"
+        ]
+      }
+    ],
+    uncles: [],
+    proposals: [
+      "0x12345678901234567890",
+      "0xabcdeabcdeabcdeabcde"
+    ]
+  });
+  t.pass();
+})
+
+test("correct cellbase witness", t => {
+  validators.ValidateCellbaseWitness({
+    lock: {
+      code_hash: "0xa98c57135830e1b91345948df6c4b8870828199a786b26f09f7dec4bc27a73da",
+      args: "0x1234",
+      hash_type: "data"
+    },
+    message: "0x1234abcdef"
+  });
+  t.pass();
+});
+
+test("correct witness args", t => {
+  validators.ValidateWitnessArgs({
+    lock: "0x1234",
+    input_type: "0x4678",
+    output_type: "0x2312"
+  });
+  t.pass();
+});
+
+test("empty witness args", t => {
+  validators.ValidateWitnessArgs({
+  });
+  t.pass();
+});
+
+test("only one witness args", t => {
+  validators.ValidateWitnessArgs({
+    lock: "0x1234"
+  });
+  t.pass();
+});
+
+test("invalid witness args", t => {
+  t.throws(() => {
+    validators.ValidateWitnessArgs({
+      lock: "0x1234",
+      invalidkey: "0x1232"
+    });
+  });
+});
+
+test("invalid witness args content", t => {
+  t.throws(() => {
+    validators.ValidateWitnessArgs({
+      lock: "0x1234gg",
+    });
+  });
+});
