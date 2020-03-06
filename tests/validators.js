@@ -125,7 +125,7 @@ test("cellinput with invalid outpoint but skip nested validation", t => {
       tx_hash: "0xa98c57135830e1b91345948df",
       index: "0x0"
     }
-  }, false);
+  }, { nestedValidation: false });
   t.pass();
 });
 
@@ -188,7 +188,7 @@ test("celloutput with invalid lock but skips validation", t => {
     lock: {
       invalid: "lock"
     }
-  }, false);
+  }, { nestedValidation: false });
   t.pass();
 });
 
@@ -228,7 +228,7 @@ test("celldep with invalid out point but skips validation", t => {
   validators.ValidateCellDep({
     dep_type: "dep_group",
     out_point: "invalid out point"
-  }, false);
+  }, { nestedValidation: false });
   t.pass();
 });
 
