@@ -22,7 +22,9 @@ const handler = {
         throw new Error("JSONRPCError: response ID does not match request ID!");
       }
       if (data.error) {
-        throw new Error(`JSONRPCError: server error ${JSON.stringify(data.error)}`);
+        throw new Error(
+          `JSONRPCError: server error ${JSON.stringify(data.error)}`
+        );
       }
       return data.result;
     };

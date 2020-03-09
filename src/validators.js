@@ -8,16 +8,30 @@ function assertObject(debugPath, object) {
   }
 }
 
-function assertObjectWithKeys(debugPath, object, expectedKeys, optionalKeys = []) {
+function assertObjectWithKeys(
+  debugPath,
+  object,
+  expectedKeys,
+  optionalKeys = []
+) {
   assertObject(debugPath, object);
   const providedKeys = Object.keys(object).sort();
   const requiredLength = expectedKeys.length;
   const maximalLength = expectedKeys.length + optionalKeys.length;
-  const errorMessage = `${debugPath} does not have correct keys! Required keys: [${expectedKeys.sort().join(", ")}], optional keys: [${optionalKeys.sort().join(", ")}], actual keys: [${providedKeys.join(", ")}]`;
-  if (providedKeys.length < requiredLength || providedKeys.length > maximalLength) {
+  const errorMessage = `${debugPath} does not have correct keys! Required keys: [${expectedKeys
+    .sort()
+    .join(", ")}], optional keys: [${optionalKeys
+    .sort()
+    .join(", ")}], actual keys: [${providedKeys.join(", ")}]`;
+  if (
+    providedKeys.length < requiredLength ||
+    providedKeys.length > maximalLength
+  ) {
     throw new Error(errorMessage);
   }
-  let optionalProvidedKeys = providedKeys.filter(key => !expectedKeys.includes(key));
+  let optionalProvidedKeys = providedKeys.filter(
+    key => !expectedKeys.includes(key)
+  );
   if (providedKeys.length - optionalProvidedKeys.length !== requiredLength) {
     throw new Error(errorMessage);
   }
@@ -28,7 +42,7 @@ function assertObjectWithKeys(debugPath, object, expectedKeys, optionalKeys = []
 
 function assertHexString(debugPath, string) {
   if (!/^0x([0-9a-fA-F][0-9a-fA-F])*$/.test(string)) {
-    throw new Error(`${debugPath} must be a hex string!`)
+    throw new Error(`${debugPath} must be a hex string!`);
   }
 }
 
@@ -44,12 +58,20 @@ function assertInteger(debugPath, i) {
     return;
   }
   if (!/^0x[1-9a-fA-F][0-9a-fA-F]*$/.test(i)) {
-    throw new Error(`${debugPath} must be a hex integer!`)
+    throw new Error(`${debugPath} must be a hex integer!`);
   }
 }
 
-export function ValidateScript(script, { nestedValidation = true, debugPath = "script" } = {}) {
-  assertObjectWithKeys(debugPath, script, ["code_hash", "hash_type", "args"], []);
+export function ValidateScript(
+  script,
+  { nestedValidation = true, debugPath = "script" } = {}
+) {
+  assertObjectWithKeys(
+    debugPath,
+    script,
+    ["code_hash", "hash_type", "args"],
+    []
+  );
   assertHash(`${debugPath}.code_hash`, script.code_hash);
   assertHexString(`${debugPath}.args`, script.args);
 
@@ -58,13 +80,19 @@ export function ValidateScript(script, { nestedValidation = true, debugPath = "s
   }
 }
 
-export function ValidateOutPoint(outPoint, { nestedValidation = true, debugPath = "out_point" } = {}) {
+export function ValidateOutPoint(
+  outPoint,
+  { nestedValidation = true, debugPath = "out_point" } = {}
+) {
   assertObjectWithKeys(debugPath, outPoint, ["tx_hash", "index"], []);
   assertHash(`${debugPath}.tx_hash`, outPoint.tx_hash);
   assertInteger(`${debugPath}.index`, outPoint.index);
 }
 
-export function ValidateCellInput(cellInput, { nestedValidation = true, debugPath = "cell_input"} = {}) {
+export function ValidateCellInput(
+  cellInput,
+  { nestedValidation = true, debugPath = "cell_input" } = {}
+) {
   assertObjectWithKeys(debugPath, cellInput, ["since", "previous_output"], []);
   assertInteger(`${debugPath}.since`, cellInput.since);
 
@@ -75,7 +103,10 @@ export function ValidateCellInput(cellInput, { nestedValidation = true, debugPat
   }
 }
 
-export function ValidateCellOutput(cellOutput, { nestedValidation = true, debugPath = "cell_output"} = {}) {
+export function ValidateCellOutput(
+  cellOutput,
+  { nestedValidation = true, debugPath = "cell_output" } = {}
+) {
   assertObjectWithKeys(debugPath, cellOutput, ["capacity", "lock"], ["type"]);
   assertInteger(`${debugPath}.capacity`, cellOutput.capacity);
 
@@ -91,8 +122,10 @@ export function ValidateCellOutput(cellOutput, { nestedValidation = true, debugP
   }
 }
 
-
-export function ValidateCellDep(cellDep, { nestedValidation = true, debugPath = "cell_dep"} = {}) {
+export function ValidateCellDep(
+  cellDep,
+  { nestedValidation = true, debugPath = "cell_dep" } = {}
+) {
   assertObjectWithKeys(debugPath, cellDep, ["out_point", "dep_type"], []);
   if (cellDep.dep_type !== "code" && cellDep.dep_type !== "dep_group") {
     throw new Error(`${debugPath}.dep_type must be either code or dep_group!`);
@@ -127,33 +160,83 @@ function toAssert(validateFunction, nestedValidation) {
 
 function assertCommonTransaction(debugPath, rawTransaction, nestedValidation) {
   assertInteger(`${debugPath}.version`, rawTransaction.version);
-  assertArray(`${debugPath}.cell_deps`, rawTransaction.cell_deps,
-              toAssert(ValidateCellDep, nestedValidation),
-              nestedValidation);
-  assertArray(`${debugPath}.header_deps`, rawTransaction.header_deps,
-              assertHash, nestedValidation);
-  assertArray(`${debugPath}.inputs`, rawTransaction.inputs,
-              toAssert(ValidateCellInput, nestedValidation), nestedValidation);
-  assertArray(`${debugPath}.outputs`, rawTransaction.outputs,
-              toAssert(ValidateCellOutput, nestedValidation), nestedValidation);
-  assertArray(`${debugPath}.outputs_data`, rawTransaction.outputs_data,
-              assertHexString, nestedValidation);
+  assertArray(
+    `${debugPath}.cell_deps`,
+    rawTransaction.cell_deps,
+    toAssert(ValidateCellDep, nestedValidation),
+    nestedValidation
+  );
+  assertArray(
+    `${debugPath}.header_deps`,
+    rawTransaction.header_deps,
+    assertHash,
+    nestedValidation
+  );
+  assertArray(
+    `${debugPath}.inputs`,
+    rawTransaction.inputs,
+    toAssert(ValidateCellInput, nestedValidation),
+    nestedValidation
+  );
+  assertArray(
+    `${debugPath}.outputs`,
+    rawTransaction.outputs,
+    toAssert(ValidateCellOutput, nestedValidation),
+    nestedValidation
+  );
+  assertArray(
+    `${debugPath}.outputs_data`,
+    rawTransaction.outputs_data,
+    assertHexString,
+    nestedValidation
+  );
 }
 
-export function ValidateRawTransaction(rawTransaction, { nestedValidation = true, debugPath = "raw_transaction" } = {}) {
-  assertObjectWithKeys(debugPath, rawTransaction,
-                       ["version", "cell_deps", "header_deps",
-                        "inputs", "outputs", "outputs_data"], []);
+export function ValidateRawTransaction(
+  rawTransaction,
+  { nestedValidation = true, debugPath = "raw_transaction" } = {}
+) {
+  assertObjectWithKeys(
+    debugPath,
+    rawTransaction,
+    [
+      "version",
+      "cell_deps",
+      "header_deps",
+      "inputs",
+      "outputs",
+      "outputs_data"
+    ],
+    []
+  );
   assertCommonTransaction(debugPath, rawTransaction, nestedValidation);
 }
 
-export function ValidateTransaction(transaction, { nestedValidation = true, debugPath = "transaction" } = {}) {
-  assertObjectWithKeys(debugPath, transaction,
-                       ["version", "cell_deps", "header_deps", "inputs",
-                        "outputs", "outputs_data", "witnesses"], []);
+export function ValidateTransaction(
+  transaction,
+  { nestedValidation = true, debugPath = "transaction" } = {}
+) {
+  assertObjectWithKeys(
+    debugPath,
+    transaction,
+    [
+      "version",
+      "cell_deps",
+      "header_deps",
+      "inputs",
+      "outputs",
+      "outputs_data",
+      "witnesses"
+    ],
+    []
+  );
   assertCommonTransaction(debugPath, transaction, nestedValidation);
-  assertArray(`${debugPath}.witnesses`, transaction.witnesses,
-              assertHexString, nestedValidation);
+  assertArray(
+    `${debugPath}.witnesses`,
+    transaction.witnesses,
+    assertHexString,
+    nestedValidation
+  );
 }
 
 function assertCommonHeader(debugPath, rawHeader) {
@@ -169,22 +252,57 @@ function assertCommonHeader(debugPath, rawHeader) {
   assertHash(`${debugPath}.dao`, rawHeader.dao);
 }
 
-export function ValidateRawHeader(rawHeader, { nestedValidation = true, debugPath = "raw_header" } = {}) {
-  assertObjectWithKeys(debugPath, rawHeader,
-                       ["version", "compact_target", "timestamp", "number",
-                        "epoch", "parent_hash", "transactions_root",
-                        "proposals_hash", "uncles_hash", "dao"], []);
+export function ValidateRawHeader(
+  rawHeader,
+  { nestedValidation = true, debugPath = "raw_header" } = {}
+) {
+  assertObjectWithKeys(
+    debugPath,
+    rawHeader,
+    [
+      "version",
+      "compact_target",
+      "timestamp",
+      "number",
+      "epoch",
+      "parent_hash",
+      "transactions_root",
+      "proposals_hash",
+      "uncles_hash",
+      "dao"
+    ],
+    []
+  );
   assertCommonHeader(debugPath, rawHeader);
 }
 
-export function ValidateHeader(header, { nestedValidation = true, debugPath = "header" } = {}) {
-  assertObjectWithKeys(debugPath, header,
-                       ["version", "compact_target", "timestamp", "number",
-                        "epoch", "parent_hash", "transactions_root",
-                        "proposals_hash", "uncles_hash", "dao", "nonce"], []);
+export function ValidateHeader(
+  header,
+  { nestedValidation = true, debugPath = "header" } = {}
+) {
+  assertObjectWithKeys(
+    debugPath,
+    header,
+    [
+      "version",
+      "compact_target",
+      "timestamp",
+      "number",
+      "epoch",
+      "parent_hash",
+      "transactions_root",
+      "proposals_hash",
+      "uncles_hash",
+      "dao",
+      "nonce"
+    ],
+    []
+  );
   assertHexString(`${debugPath}.nonce`, header.nonce);
   if (header.nonce.length != 34) {
-    throw new Error(`${debugPath}.nonce must be a hex string of 34 bytes long!`);
+    throw new Error(
+      `${debugPath}.nonce must be a hex string of 34 bytes long!`
+    );
   }
 }
 
@@ -195,7 +313,10 @@ function assertProposalShortId(debugPath, shortId) {
   }
 }
 
-export function ValidateUncleBlock(uncleBlock, { nestedValidation = true, debugPath = "uncle_block" } = {}) {
+export function ValidateUncleBlock(
+  uncleBlock,
+  { nestedValidation = true, debugPath = "uncle_block" } = {}
+) {
   assertObjectWithKeys(debugPath, uncleBlock, ["header", "proposals"], []);
 
   if (nestedValidation) {
@@ -203,28 +324,54 @@ export function ValidateUncleBlock(uncleBlock, { nestedValidation = true, debugP
       debugPath: `${debugPath}.header`
     });
   }
-  assertArray(`${debugPath}.proposals`, uncleBlock.proposals,
-              assertProposalShortId, nestedValidation);
+  assertArray(
+    `${debugPath}.proposals`,
+    uncleBlock.proposals,
+    assertProposalShortId,
+    nestedValidation
+  );
 }
 
-export function ValidateBlock(block, { nestedValidation = true, debugPath = "block" } = {}) {
-  assertObjectWithKeys(debugPath, block, ["header", "uncles",
-                                          "transactions", "proposals"], []);
+export function ValidateBlock(
+  block,
+  { nestedValidation = true, debugPath = "block" } = {}
+) {
+  assertObjectWithKeys(
+    debugPath,
+    block,
+    ["header", "uncles", "transactions", "proposals"],
+    []
+  );
 
   if (nestedValidation) {
     ValidateHeader(block.header, {
       debugPath: `${debugPath}.header`
     });
   }
-  assertArray(`${debugPath}.uncles`, block.uncles,
-              toAssert(ValidateUncleBlock, nestedValidation), nestedValidation);
-  assertArray(`${debugPath}.transactions`, block.transactions,
-              toAssert(ValidateTransaction, nestedValidation), nestedValidation);
-  assertArray(`${debugPath}.proposals`, block.proposals,
-              assertProposalShortId, nestedValidation);
+  assertArray(
+    `${debugPath}.uncles`,
+    block.uncles,
+    toAssert(ValidateUncleBlock, nestedValidation),
+    nestedValidation
+  );
+  assertArray(
+    `${debugPath}.transactions`,
+    block.transactions,
+    toAssert(ValidateTransaction, nestedValidation),
+    nestedValidation
+  );
+  assertArray(
+    `${debugPath}.proposals`,
+    block.proposals,
+    assertProposalShortId,
+    nestedValidation
+  );
 }
 
-export function ValidateCellbaseWitness(cellbaseWitness, { nestedValidation = true, debugPath = "cellbase_witness" } = {}) {
+export function ValidateCellbaseWitness(
+  cellbaseWitness,
+  { nestedValidation = true, debugPath = "cellbase_witness" } = {}
+) {
   assertObjectWithKeys(debugPath, cellbaseWitness, ["lock", "message"], []);
   assertHexString(`${debugPath}.message`, cellbaseWitness.message);
 
@@ -235,8 +382,16 @@ export function ValidateCellbaseWitness(cellbaseWitness, { nestedValidation = tr
   }
 }
 
-export function ValidateWitnessArgs(witnessArgs, { nestedValidation = true, debugPath = "witness_args" } = {}) {
-  assertObjectWithKeys(debugPath, witnessArgs, [], ["lock", "input_type", "output_type"]);
+export function ValidateWitnessArgs(
+  witnessArgs,
+  { nestedValidation = true, debugPath = "witness_args" } = {}
+) {
+  assertObjectWithKeys(
+    debugPath,
+    witnessArgs,
+    [],
+    ["lock", "input_type", "output_type"]
+  );
 
   if (witnessArgs.lock) {
     assertHexString(`${debugPath}.lock`, witnessArgs.lock);

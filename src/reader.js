@@ -12,10 +12,14 @@ class ArrayBufferReader {
   }
 
   serializeJson() {
-    return "0x" + Array.prototype.map.call(
-      new Uint8Array(this.view.buffer),
-      (x) => ("00" + x.toString(16)).slice(-2)
-    ).join("")
+    return (
+      "0x" +
+      Array.prototype.map
+        .call(new Uint8Array(this.view.buffer), x =>
+          ("00" + x.toString(16)).slice(-2)
+        )
+        .join("")
+    );
   }
 }
 
@@ -40,9 +44,10 @@ class HexStringReader {
 export class Reader {
   constructor(input) {
     if (typeof input === "string") {
-      if ((!input.startsWith("0x")) ||
-          (input.length % 2 != 0)) {
-        throw new Error("Hex string must start with 0x, and has even numbered length!");
+      if (!input.startsWith("0x") || input.length % 2 != 0) {
+        throw new Error(
+          "Hex string must start with 0x, and has even numbered length!"
+        );
       }
       return new HexStringReader(input);
     }
@@ -58,7 +63,7 @@ export class Reader {
 
     for (let i = 0; i < string.length; i++) {
       const c = string.charCodeAt(i);
-      if (c > 0xFF) {
+      if (c > 0xff) {
         throw new Error("fromRawString can only accept UTF-8 raw string!");
       }
       view.setUint8(i, c);

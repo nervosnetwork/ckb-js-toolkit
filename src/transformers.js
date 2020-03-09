@@ -19,7 +19,7 @@
 import * as validators from "./validators";
 
 function invokeSerializeJson(value) {
-  if ((value instanceof Object) && value.serializeJson instanceof Function) {
+  if (value instanceof Object && value.serializeJson instanceof Function) {
     return value.serializeJson();
   }
   return value;
@@ -38,7 +38,10 @@ function transformObject(debugPath, object, keys) {
   return result;
 }
 
-export function TransformScript(script, { validation = true, debugPath = "script" } = {}) {
+export function TransformScript(
+  script,
+  { validation = true, debugPath = "script" } = {}
+) {
   script = transformObject(debugPath, script, {
     code_hash: invokeSerializeJson,
     hash_type: invokeSerializeJson,
@@ -46,7 +49,9 @@ export function TransformScript(script, { validation = true, debugPath = "script
   });
 
   if (validation) {
-    validators.ValidateScript(script, { debugPath: `(transformed) ${debugPath}` });
+    validators.ValidateScript(script, {
+      debugPath: `(transformed) ${debugPath}`
+    });
   }
   return script;
 }

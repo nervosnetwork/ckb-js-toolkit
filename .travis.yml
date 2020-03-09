@@ -3,14 +3,19 @@ node_js:
   - "12"
 dist: bionic
 
+before_script:
+  - npm install
+
 matrix:
   include:
     - name: build
       script:
-        - npm install
         - npm run dist
         - git diff --exit-code
     - name: test
       script:
-        - npm install
         - npm run test
+    - name: fmt
+      script:
+        - npm run fmt
+        - git diff --exit-code
