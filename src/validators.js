@@ -3,9 +3,7 @@
 // directly
 
 function assertObject(debugPath, object) {
-  if (object === null ||
-      typeof object !== "object" ||
-      object.constructor !== Object) {
+  if (!(object instanceof Object)) {
     throw new Error(`${debugPath} is not an object!`);
   }
 }

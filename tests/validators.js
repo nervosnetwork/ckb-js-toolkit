@@ -19,6 +19,12 @@ test("correct script with empty args", t => {
   t.pass();
 });
 
+test("script that is not object", t => {
+  t.throws(() => {
+    validators.ValidateScript("i am a script, trust me");
+  });
+});
+
 test("script with invalid code hash", t => {
   t.throws(() => {
     validators.ValidateScript({
