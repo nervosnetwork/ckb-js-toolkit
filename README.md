@@ -9,14 +9,14 @@ The toolkit here is built with specific design goals, if some of the design feel
 
 ## Version Stability
 
-One design goal here is the stability of the toolkit, we are the toolkit version you use can stay unchanged unless one of the following conditions is met:
+One design goal here is the stability of the toolkit, meaning the toolkit version you use can stay unchanged unless one of the following conditions is met:
 
 * A security vulnerability occurs
 * A fork happens in CKB
 
 ## Code Compatibility
 
-In the meantime, we also want to ensure code compatibility: we might upgrade the toolkit from time to time with new features. But when you are upgrading the toolkit version, you shouldn't expect any code breaks. Sometimes this might be infeasible, such as when security bugs or forks happen, but for the vast majority of the changes, we do want to ensure code compatibility.
+In the meantime, we also want to ensure code compatibility: we might upgrade the toolkit from time to time with new features. But when you are upgrading the toolkit version, you shouldn't expect any code breaks. Sometimes this might be infeasible, such as when security bugs or forks happen, but for the vast majority of the changes, we do want to ensure code compatibility at all costs.
 
 And before you ask, personally I don't trust in [Semantic Versioning](https://semver.org/). I do want to ensure code compatibility with all my efforts regardless of the specific part changed in the version number.
 
