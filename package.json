@@ -1,6 +1,6 @@
 {
   "name": "ckb-js-toolkit",
-  "version": "0.4.0",
+  "version": "0.5.0",
   "description": "JavaScript toolkits used to build dapps for Nervos CKB",
   "main": "dist/ckb-js-toolkit.node.js",
   "browser": "dist/ckb-js-toolkit.esm.js",
@@ -25,6 +25,7 @@
   "devDependencies": {
     "@rollup/plugin-commonjs": "^11.0.2",
     "@rollup/plugin-node-resolve": "^7.1.1",
+    "@rollup/plugin-replace": "^2.3.1",
     "ava": "^3.5.0",
     "prettier": "1.19.1",
     "rollup": "^1.32.0",
