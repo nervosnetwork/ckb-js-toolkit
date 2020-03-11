@@ -57,6 +57,9 @@ class HexStringReader {
 
 export class Reader {
   constructor(input) {
+    if (input instanceof HexStringReader || input instanceof ArrayBufferReader) {
+      return input;
+    }
     if (typeof input === "string") {
       if (!input.startsWith("0x") || input.length % 2 != 0) {
         throw new Error(
