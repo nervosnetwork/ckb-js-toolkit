@@ -11,6 +11,10 @@ class ArrayBufferReader {
     return this.view.getUint8(i);
   }
 
+  toArrayBuffer() {
+    return this.view.buffer;
+  }
+
   serializeJson() {
     return (
       "0x" +
@@ -34,6 +38,16 @@ class HexStringReader {
 
   indexAt(i) {
     return parseInt(this.string.substr(2 + i * 2, 2), 16);
+  }
+
+  toArrayBuffer() {
+    const buffer = new ArrayBuffer(this.length());
+    const view = new DataView(buffer);
+
+    for (let i = 0; i < this.length(); i++) {
+      view.setUint8(i, this.indexAt(i));
+    }
+    return buffer;
   }
 
   serializeJson() {
