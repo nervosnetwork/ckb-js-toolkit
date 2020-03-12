@@ -386,6 +386,6 @@ One additional note here, is that even though RPCCollector above only gathers ce
 
 ### RPCCollector
 
-RPCCollector uses [get_cells_by_lock_hash](https://github.com/nervosnetwork/ckb/tree/develop/rpc#get_cells_by_lock_hash) to fetch matched live cells via CKB RPC. It only allows fetching live cells matching provided lock script hash, and can be controled to either provide or omit cell data.
+RPCCollector uses [get_cells_by_lock_hash](https://github.com/nervosnetwork/ckb/tree/develop/rpc#get_cells_by_lock_hash) to fetch matched live cells via CKB RPC. It only allows fetching live cells matching provided lock script hash, and can be controlled to either provide or omit cell data.
 
 Note RPCCollector is a naive implementation, meaning it would do the full scanning every time you call `collect`. This means it could be quite slow, and you should never use it in production. It is only used here for demostration purposes.
