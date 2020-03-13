@@ -14,7 +14,8 @@
   "scripts": {
     "dist": "rollup -c --environment BUILD:production",
     "test": "rollup -c --environment BUILD:development && ava",
-    "fmt": "prettier --write \"{src,tests}/**/*.js\""
+    "fmt": "prettier --write \"{src,tests}/**/*.js\"",
+    "update-test-files": "curl -L https://raw.githubusercontent.com/nervosnetwork/ckb/27c36a55e6358fd04153ec3da4638b6e10660da6/util/types/schemas/blockchain.mol -o testfiles/blockchain.mol && moleculec --language - --schema-file testfiles/blockchain.mol --format json > testfiles/blockchain.json && moleculec-es -inputFile testfiles/blockchain.json -outputFile testfiles/blockchain.esm.js && rollup -f umd -i testfiles/blockchain.esm.js -o testfiles/blockchain.umd.js --name Blockchain && rm testfiles/blockchain.mol testfiles/blockchain.json testfiles/blockchain.esm.js"
   },
   "author": "Xuejie Xiao",
   "license": "MIT",
