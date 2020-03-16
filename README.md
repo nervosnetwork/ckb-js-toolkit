@@ -32,6 +32,7 @@ In the future we might certainly provide TypeScript typing files(and maybe also 
 * [Reader](#reader)
 * [Validators](#validators)
 * [Transformers](#transformers)
+* [Normalizers](#normalizers)
 * [Cell Collectors](#cell-collectors)
 
 # RPC
@@ -328,6 +329,40 @@ Transformer functions use the following transformation rules:
 ## Note on Reader class
 
 We have already provided `serializeJson` method for all instances of the Reader class, that means you can freely use Reader class in your code. As long as you apply transformer functions before sending the values to CKB RPC, all the Reader objects will be transformed to correct hex strings.
+
+# Normalizers
+
+## Overview
+
+Normalizers serve a different purpose: in addition to the molecule serialization format, CKB still encodes certain domain specific knowledge to interpret the data. This brings a gap between the JSON data structure used in CKB RPC, and the molecule serialized formats used internally. If you are only using CKB RPC, you probably will not use this package, but if you need to work with CKB in a deeper level(for example, if you are writing a smart contract in JavaScript), chances are you might need this package.
+
+A sample usage for this package can be seen in the included [tests](https://github.com/xxuejie/ckb-js-toolkit/blob/master/tests/serializers.js). A normalizer function takes plain JavaScript object that can be validated by validator function, it then emits another transformed plain JavaScript object which can be serialized by [moleculec-es](https://github.com/xxuejie/moleculec-es) into serialized ArrayBuffer data in molecule format.
+
+## Function prototypes
+
+For each CKB data structure, we have prepared a normalizer function, which means right now the following functions are available:
+
+* [NormalizeScript](https://github.com/xxuejie/ckb-js-toolkit/blob/d17eda8dc41689b14913500332085d9a9ae85a01/src/normalizers.js#L71)
+* [NormalizeOutPoint](https://github.com/xxuejie/ckb-js-toolkit/blob/d17eda8dc41689b14913500332085d9a9ae85a01/src/normalizers.js#L92)
+* [NormalizeCellInput](https://github.com/xxuejie/ckb-js-toolkit/blob/d17eda8dc41689b14913500332085d9a9ae85a01/src/normalizers.js#L107)
+* [NormalizeCellOutput](https://github.com/xxuejie/ckb-js-toolkit/blob/d17eda8dc41689b14913500332085d9a9ae85a01/src/normalizers.js#L117)
+* [NormalizeCellDep](https://github.com/xxuejie/ckb-js-toolkit/blob/d17eda8dc41689b14913500332085d9a9ae85a01/src/normalizers.js#L133)
+* [NormalizeRawTransaction](https://github.com/xxuejie/ckb-js-toolkit/blob/d17eda8dc41689b14913500332085d9a9ae85a01/src/normalizers.js#L161)
+* [NormalizeTransaction](https://github.com/xxuejie/ckb-js-toolkit/blob/d17eda8dc41689b14913500332085d9a9ae85a01/src/normalizers.js#L175)
+* [NormalizeRawHeader](https://github.com/xxuejie/ckb-js-toolkit/blob/d17eda8dc41689b14913500332085d9a9ae85a01/src/normalizers.js#L189)
+* [NormalizeHeader](https://github.com/xxuejie/ckb-js-toolkit/blob/d17eda8dc41689b14913500332085d9a9ae85a01/src/normalizers.js#L207)
+* [NormalizeUncleBlock](https://github.com/xxuejie/ckb-js-toolkit/blob/d17eda8dc41689b14913500332085d9a9ae85a01/src/normalizers.js#L218)
+* [NormalizeBlock](https://github.com/xxuejie/ckb-js-toolkit/blob/d17eda8dc41689b14913500332085d9a9ae85a01/src/normalizers.js#L228)
+* [NormalizeCellbaseWitness](https://github.com/xxuejie/ckb-js-toolkit/blob/d17eda8dc41689b14913500332085d9a9ae85a01/src/normalizers.js#L237)
+* [NormalizeWitnessArgs](https://github.com/xxuejie/ckb-js-toolkit/blob/d17eda8dc41689b14913500332085d9a9ae85a01/src/normalizers.js#L247)
+
+Each normalizer function uses exactly the same function prototype as below:
+
+```js
+function transform(value, { debugPath = "" } = {})
+```
+
+`value` here contains the value which can be validated by corresponding validator function. `debugPath` works like the same value in validators, and could safely be ignored in 99% of the cases.
 
 # Cell Collectors
 
