@@ -19,7 +19,7 @@ function normalizeHexNumber(length) {
     if (!(value instanceof ArrayBuffer)) {
       let intValue = BigIntToHexString(JSBI.BigInt(value)).substr(2);
       if (intValue.length % 2 !== 0) {
-        intValue = "0" + i;
+        intValue = "0" + intValue;
       }
       if (intValue.length / 2 > length) {
         throw new Error(
@@ -87,4 +87,182 @@ export function NormalizeScript(script, { debugPath = "script" } = {}) {
     },
     args: normalizeRawData(-1)
   });
+}
+
+export function NormalizeOutPoint(outPoint, { debugPath = "out_point" } = {}) {
+  return normalizeObject(debugPath, outPoint, {
+    tx_hash: normalizeRawData(32),
+    index: normalizeHexNumber(4)
+  });
+}
+
+function toNormalize(normalize) {
+  return function(debugPath, value) {
+    return normalize(value, {
+      debugPath
+    });
+  };
+}
+
+export function NormalizeCellInput(
+  cellInput,
+  { debugPath = "cell_input" } = {}
+) {
+  return normalizeObject(debugPath, cellInput, {
+    since: normalizeHexNumber(8),
+    previous_output: toNormalize(NormalizeOutPoint)
+  });
+}
+
+export function NormalizeCellOutput(
+  cellOutput,
+  { debugPath = "cell_output" } = {}
+) {
+  const result = normalizeObject(debugPath, cellOutput, {
+    capacity: normalizeHexNumber(8),
+    lock: toNormalize(NormalizeScript)
+  });
+  if (cellOutput.type) {
+    result.type_ = NormalizeScript(cellOutput.type, {
+      debugPath: `${debugPath}.type`
+    });
+  }
+  return result;
+}
+
+export function NormalizeCellDep(cellDep, { debugPath = "cell_dep" } = {}) {
+  return normalizeObject(debugPath, cellDep, {
+    out_point: toNormalize(NormalizeOutPoint),
+    dep_type: function(debugPath, value) {
+      switch (value) {
+        case "code":
+          return 0;
+        case "dep_group":
+          return 1;
+        case 0:
+          return value;
+        case 1:
+          return value;
+        default:
+          throw new Error(`${debugPath}.dep_type has invalid value: ${value}`);
+      }
+    }
+  });
+}
+
+function toNormalizeArray(normalizeFunction) {
+  return function(debugPath, array) {
+    return array.map((item, i) => {
+      return normalizeFunction(`${debugPath}[${i}]`, item);
+    });
+  };
+}
+
+export function NormalizeRawTransaction(
+  rawTransaction,
+  { debugPath = "raw_transaction" } = {}
+) {
+  return normalizeObject(debugPath, rawTransaction, {
+    version: normalizeHexNumber(4),
+    cell_deps: toNormalizeArray(toNormalize(NormalizeCellDep)),
+    header_deps: toNormalizeArray(normalizeRawData(32)),
+    inputs: toNormalizeArray(toNormalize(NormalizeCellInput)),
+    outputs: toNormalizeArray(toNormalize(NormalizeCellOutput)),
+    outputs_data: toNormalizeArray(normalizeRawData(-1))
+  });
+}
+
+export function NormalizeTransaction(
+  transaction,
+  { debugPath = "transaction" } = {}
+) {
+  const rawTransaction = NormalizeRawTransaction(transaction, {
+    debugPath: `(raw)${debugPath}`
+  });
+  const result = normalizeObject(debugPath, transaction, {
+    witnesses: toNormalizeArray(normalizeRawData(-1))
+  });
+  result.raw = rawTransaction;
+  return result;
+}
+
+export function NormalizeRawHeader(
+  rawHeader,
+  { debugPath = "raw_header" } = {}
+) {
+  return normalizeObject(debugPath, rawHeader, {
+    version: normalizeHexNumber(4),
+    compact_target: normalizeHexNumber(4),
+    timestamp: normalizeHexNumber(8),
+    number: normalizeHexNumber(8),
+    epoch: normalizeHexNumber(8),
+    parent_hash: normalizeRawData(32),
+    transactions_root: normalizeRawData(32),
+    proposals_hash: normalizeRawData(32),
+    uncles_hash: normalizeRawData(32),
+    dao: normalizeRawData(32)
+  });
+}
+
+export function NormalizeHeader(header, { debugPath = "header" } = {}) {
+  const rawHeader = NormalizeRawHeader(header, {
+    debugPath: `(raw)${debugPath}`
+  });
+  const result = normalizeObject(debugPath, header, {
+    nonce: normalizeHexNumber(16)
+  });
+  result.raw = rawHeader;
+  return result;
+}
+
+export function NormalizeUncleBlock(
+  uncleBlock,
+  { debugPath = "uncle_block" } = {}
+) {
+  return normalizeObject(debugPath, uncleBlock, {
+    header: toNormalize(NormalizeHeader),
+    proposals: toNormalizeArray(normalizeRawData(10))
+  });
+}
+
+export function NormalizeBlock(block, { debugPath = "block" } = {}) {
+  return normalizeObject(debugPath, block, {
+    header: toNormalize(NormalizeHeader),
+    uncles: toNormalizeArray(toNormalize(NormalizeUncleBlock)),
+    transactions: toNormalizeArray(toNormalize(NormalizeTransaction)),
+    proposals: toNormalizeArray(normalizeRawData(10))
+  });
+}
+
+export function NormalizeCellbaseWitness(
+  cellbaseWitness,
+  { debugPath = "cellbase_witness" } = {}
+) {
+  return normalizeObject(debugPath, cellbaseWitness, {
+    lock: toNormalize(NormalizeScript),
+    message: normalizeRawData(-1)
+  });
+}
+
+export function NormalizeWitnessArgs(
+  witnessArgs,
+  { debugPath = "witness_args" } = {}
+) {
+  const result = {};
+  if (witnessArgs.lock) {
+    result.lock = normalizeRawData(-1)(`${debugPath}.lock`, witnessArgs.lock);
+  }
+  if (witnessArgs.input_type) {
+    result.input_type = normalizeRawData(-1)(
+      `${debugPath}.input_type`,
+      witnessArgs.input_type
+    );
+  }
+  if (witnessArgs.output_type) {
+    result.output_type = normalizeRawData(-1)(
+      `${debugPath}.output_type`,
+      witnessArgs.output_type
+    );
+  }
+  return result;
 }
