@@ -38,25 +38,25 @@ export class RPCCollector {
           ) {
             continue;
           }
-          let data = null;
-          if (this.loadData) {
-            const cellWithData = await this.rpc.get_live_cell(
-              cell.out_point,
-              true
-            );
-            data = cellWithData.cell.data.content;
-          }
-          yield {
-            cell_output: {
-              capacity: cell.capacity,
-              lock: cell.lock,
-              type: cell.type
-            },
-            out_point: cell.out_point,
-            block_hash: cell.block_hash,
-            data: data
-          };
         }
+        let data = null;
+        if (this.loadData) {
+          const cellWithData = await this.rpc.get_live_cell(
+            cell.out_point,
+            true
+          );
+          data = cellWithData.cell.data.content;
+        }
+        yield {
+          cell_output: {
+            capacity: cell.capacity,
+            lock: cell.lock,
+            type: cell.type
+          },
+          out_point: cell.out_point,
+          block_hash: cell.block_hash,
+          data: data
+        };
       }
       currentFrom = JSBI.add(currentTo, JSBI.BigInt(1));
     }
