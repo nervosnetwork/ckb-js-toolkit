@@ -48,6 +48,7 @@ export class RPCCollector {
           data = cellWithData.cell.data.content;
         }
         yield {
+          cellbase: cell.cellbase,
           cell_output: {
             capacity: cell.capacity,
             lock: cell.lock,
@@ -55,7 +56,8 @@ export class RPCCollector {
           },
           out_point: cell.out_point,
           block_hash: cell.block_hash,
-          data: data
+          data: data,
+          output_data_len: cell.output_data_len
         };
       }
       currentFrom = JSBI.add(currentTo, JSBI.BigInt(1));
