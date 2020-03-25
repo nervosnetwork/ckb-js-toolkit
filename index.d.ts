@@ -19,8 +19,8 @@ export class RPC {
   [method: string]: RPCHandler;
 }
 
-export function HexStringToBigInt(string): JSBI;
-export function BigIntToHexString(JSBI): string;
+export function HexStringToBigInt(hexString: string): JSBI;
+export function BigIntToHexString(i: JSBI): string;
 
 export interface ValidatorOptions {
   nestedValidation?: boolean;
