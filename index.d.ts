@@ -10,7 +10,7 @@ export class Reader {
   serializeJson(): string;
 }
 
-export type RPCValue = string | object;
+export type RPCValue = any;
 export type RPCHandler = (...params: RPCValue[]) => Promise<RPCValue>;
 
 export class RPC {
