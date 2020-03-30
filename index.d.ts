@@ -121,4 +121,16 @@ export namespace cell_collectors {
   }
 }
 
+export type DepGroupUnpacker = (data: Reader) => Array<object>;
+export interface TransactionDumperOptions {
+  validateTransaction?: boolean;
+  depGroupUnpacker?: DepGroupUnpacker;
+}
+
+export class TransactionDumper {
+  constructor(rpc: RPC, options?: TransactionDumperOptions);
+
+  async dump(tx: object): string;
+}
+
 export const VERSION: string;

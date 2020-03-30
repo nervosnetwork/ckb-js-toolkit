@@ -1,4 +1,5 @@
 export { Reader } from "./reader.js";
+export { TransactionDumper } from "./transaction_dumper.js";
 export { RPC, HexStringToBigInt, BigIntToHexString } from "./rpc.js";
 export * as normalizers from "./normalizers";
 export * as transformers from "./transformers";
