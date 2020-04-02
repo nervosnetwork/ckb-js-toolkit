@@ -19,6 +19,24 @@ test("transform script", t => {
   });
 });
 
+test("transform camel case script", t => {
+  const s = transformers.TransformScript({
+    codeHash:
+      "0xa98c57135830e1b91345948df6c4b8870828199a786b26f09f7dec4bc27a73da",
+    args: Reader.fromRawString("args1234"),
+    hashType: {
+      serializeJson: () => "data"
+    }
+  });
+
+  t.deepEqual(s, {
+    code_hash:
+      "0xa98c57135830e1b91345948df6c4b8870828199a786b26f09f7dec4bc27a73da",
+    args: "0x6172677331323334",
+    hash_type: "data"
+  });
+});
+
 test("transform plain script", t => {
   const s = transformers.TransformScript({
     code_hash:

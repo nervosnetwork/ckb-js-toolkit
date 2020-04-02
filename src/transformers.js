@@ -33,7 +33,13 @@ function transformObject(debugPath, object, keys) {
   const result = {};
 
   for (const [key, f] of Object.entries(keys)) {
-    const value = object[key];
+    let value = object[key];
+    if (!value) {
+      const camelKey = key.replace(/(_[a-z])/g, group =>
+        group.toUpperCase().replace("_", "")
+      );
+      value = object[camelKey];
+    }
     if (value) {
       result[key] = f(`${debugPath}.${key}`, value);
     }
