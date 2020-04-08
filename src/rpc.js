@@ -1,8 +1,48 @@
 import fetch from "cross-fetch";
 import JSBI from "jsbi";
 
+const batchHandler = {
+  get: (target, method, receiver) => {
+    if (method === "send") {
+      return async () => {
+        const response = await fetch(target.uri, {
+          method: "post",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify(target.payload)
+        });
+        return await response.json();
+      };
+    }
+    return (...params) => {
+      const id = target.id;
+      target.id = target.id + 1;
+      target.payload.push({
+        jsonrpc: "2.0",
+        id: id,
+        method: method,
+        params: params
+      });
+      return receiver;
+    };
+  }
+};
+
 const handler = {
   get: (target, method) => {
+    if (method === "batch") {
+      return () => {
+        return new Proxy(
+          {
+            id: Math.round(Math.random() * 10000000),
+            payload: [],
+            uri: target.uri
+          },
+          batchHandler
+        );
+      };
+    }
     return async (...params) => {
       const id = Math.round(Math.random() * 10000000);
       const response = await fetch(target.uri, {
@@ -35,6 +75,10 @@ export class RPC {
   constructor(uri) {
     this.uri = uri;
     return new Proxy(this, handler);
+  }
+
+  static create(uri) {
+    return new RPC(uri);
   }
 }
 

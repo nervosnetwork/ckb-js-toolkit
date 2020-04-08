@@ -10,13 +10,38 @@ export class Reader {
   serializeJson(): string;
 }
 
-export type RPCValue = string | object;
+export type RPCValue = any;
+export type RPCSyncHandler = (...params: RPCValue[]) => RPCValue;
 export type RPCHandler = (...params: RPCValue[]) => Promise<RPCValue>;
 
-export class RPC {
-  constructor(uri: string);
+export class BatchRPCMethods {
+  send: RPCHandler;
+}
 
+export class BatchRPCProxy {
+  [method: string]: RPCSyncHandler;
+}
+
+export type BatchRPC = BatchRPCMethods & BatchRPCProxy;
+
+export class RPCMethods {
+  batch: () => BatchRPC;
+}
+
+export class RPCProxy {
   [method: string]: RPCHandler;
+}
+
+export class RPC {
+  /**
+   * To preserve compatibility, we still provide the default constructor
+   * but it cannot tell if you are calling the sync method batch, or other
+   * async methods. You will need to distinguish between them yourself.
+   */
+  constructor(uri: string);
+  [method: string]: RPCHandler | RPCSyncHandler;
+
+  static create(uri: string): RPCMethods & RPCProxy;
 }
 
 export function HexStringToBigInt(hexString: string): JSBI;
@@ -119,6 +144,18 @@ export namespace cell_collectors {
 
     collect(): CellCollectorResults;
   }
+}
+
+export type DepGroupUnpacker = (data: Reader) => Array<object>;
+export interface TransactionDumperOptions {
+  validateTransaction?: boolean;
+  depGroupUnpacker?: DepGroupUnpacker;
+}
+
+export class TransactionDumper {
+  constructor(rpc: RPC, options?: TransactionDumperOptions);
+
+  dump(tx: object): Promise<string>;
 }
 
 export const VERSION: string;
