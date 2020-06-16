@@ -411,7 +411,8 @@ undefined
     tx_hash: '0xe2fb199810d49a4d8beec56718ba2593b665db9d52299a0f9e6e75416d73ff5c'
   },
   block_hash: '0x92b197aa1fba0f63633922c61c92375c9c074a93e85963554f5499fe1450d0e5',
-  data: null
+  data: null,
+  block_number: '0x0'
 }
 ```
 

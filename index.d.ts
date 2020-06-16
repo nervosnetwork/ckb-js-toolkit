@@ -123,6 +123,7 @@ export interface Cell {
   out_point: object;
   block_hash: string;
   data?: string;
+  block_number?: string;
 }
 
 export interface CellCollectorResults {
