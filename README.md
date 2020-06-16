@@ -164,7 +164,7 @@ Type ".help" for more information.
 > const toolkit = require("ckb-js-toolkit")
 > const rpc = new toolkit.RPC("http://127.0.0.1:9115/rpc")
 > const transaction = (await rpc.get_transaction("0x71a7ba8fc96349fea0ed3a5c47992e3b4084b031a42264a018e0072e8172e46c")).transaction
-> toolkit.validators.ValidateTransaction(tx.transaction)
+> toolkit.validators.ValidateTransaction(transaction)
 Uncaught:
 Error: transaction does not have correct keys! Required keys: [cell_deps, header_deps, inputs, outputs, outputs_data, version, witnesses], optional keys: [], actual keys: [cell_deps, hash, header_deps, inputs, outputs, outputs_data, version, witnesses]
 > delete transaction.hash
