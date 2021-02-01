@@ -1,6 +1,6 @@
 {
   "name": "ckb-js-toolkit",
-  "version": "0.10.1",
+  "version": "0.10.2",
   "description": "JavaScript toolkits used to build dapps for Nervos CKB",
   "main": "dist/ckb-js-toolkit.node.js",
   "browser": "dist/ckb-js-toolkit.esm.js",

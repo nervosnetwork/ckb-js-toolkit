@@ -1,19 +1,34 @@
 import fetch from "cross-fetch";
 import JSBI from "jsbi";
 
+function mergeOptions(overrideOptions, defaultOptions) {
+  defaultOptions = defaultOptions || {};
+  const headers = Object.assign(
+    {},
+    defaultOptions.headers || {},
+    overrideOptions.headers || {}
+  );
+  return Object.assign({}, defaultOptions, overrideOptions, {
+    headers: headers
+  });
+}
+
 const batchHandler = {
   get: (target, method, receiver) => {
     if (method === "send") {
       return async () => {
         const response = await fetch(
           target.uri,
-          Object.assign({}, target.defaultOptions, {
-            method: "post",
-            headers: {
-              "Content-Type": "application/json"
+          mergeOptions(
+            {
+              method: "post",
+              headers: {
+                "Content-Type": "application/json"
+              },
+              body: JSON.stringify(target.payload)
             },
-            body: JSON.stringify(target.payload)
-          })
+            target.defaultOptions
+          )
         );
         return await response.json();
       };
@@ -51,18 +66,21 @@ const handler = {
       const id = Math.round(Math.random() * 10000000);
       const response = await fetch(
         target.uri,
-        Object.assign({}, target.defaultOptions, {
-          method: "post",
-          headers: {
-            "Content-Type": "application/json"
+        mergeOptions(
+          {
+            method: "post",
+            headers: {
+              "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+              jsonrpc: "2.0",
+              id: id,
+              method: method,
+              params: params
+            })
           },
-          body: JSON.stringify({
-            jsonrpc: "2.0",
-            id: id,
-            method: method,
-            params: params
-          })
-        })
+          target.defaultOptions
+        )
       );
       const data = await response.json();
       if (data.id !== id) {
