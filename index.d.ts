@@ -38,7 +38,7 @@ export class RPC {
    * but it cannot tell if you are calling the sync method batch, or other
    * async methods. You will need to distinguish between them yourself.
    */
-  constructor(uri: string);
+  constructor(uri: string, options?: object);
   [method: string]: RPCHandler | RPCSyncHandler;
 
   static create(uri: string): RPCMethods & RPCProxy;
