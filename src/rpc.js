@@ -5,13 +5,16 @@ const batchHandler = {
   get: (target, method, receiver) => {
     if (method === "send") {
       return async () => {
-        const response = await fetch(target.uri, {
-          method: "post",
-          headers: {
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify(target.payload)
-        });
+        const response = await fetch(
+          target.uri,
+          Object.assign({}, target.defaultOptions, {
+            method: "post",
+            headers: {
+              "Content-Type": "application/json"
+            },
+            body: JSON.stringify(target.payload)
+          })
+        );
         return await response.json();
       };
     }
@@ -37,7 +40,8 @@ const handler = {
           {
             id: Math.round(Math.random() * 10000000),
             payload: [],
-            uri: target.uri
+            uri: target.uri,
+            defaultOptions: target.defaultOptions
           },
           batchHandler
         );
@@ -45,18 +49,21 @@ const handler = {
     }
     return async (...params) => {
       const id = Math.round(Math.random() * 10000000);
-      const response = await fetch(target.uri, {
-        method: "post",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-          jsonrpc: "2.0",
-          id: id,
-          method: method,
-          params: params
+      const response = await fetch(
+        target.uri,
+        Object.assign({}, target.defaultOptions, {
+          method: "post",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            jsonrpc: "2.0",
+            id: id,
+            method: method,
+            params: params
+          })
         })
-      });
+      );
       const data = await response.json();
       if (data.id !== id) {
         throw new Error("JSONRPCError: response ID does not match request ID!");
@@ -72,8 +79,9 @@ const handler = {
 };
 
 export class RPC {
-  constructor(uri) {
+  constructor(uri, defaultOptions = {}) {
     this.uri = uri;
+    this.defaultOptions = defaultOptions;
     return new Proxy(this, handler);
   }
 
