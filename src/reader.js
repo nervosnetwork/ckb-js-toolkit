@@ -66,7 +66,7 @@ export class Reader {
     if (typeof input === "string") {
       if (!input.startsWith("0x") || input.length % 2 != 0) {
         throw new Error(
-          "Hex string must start with 0x, and has even numbered length!"
+          "Hex string must start with \"0x\" and have even numbered length!"
         );
       }
       return new HexStringReader(input);
