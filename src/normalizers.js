@@ -77,9 +77,13 @@ export function NormalizeScript(script, { debugPath = "script" } = {}) {
           return 0;
         case "type":
           return 1;
+        case "data1":
+          return 2;
         case 0:
           return value;
         case 1:
+          return value;
+        case 2:
           return value;
         default:
           throw new Error(`${debugPath}.hash_type has invalid value: ${value}`);

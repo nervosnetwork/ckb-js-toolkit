@@ -11,6 +11,17 @@ test("correct script should pass validation", t => {
   t.pass();
 });
 
+test("concorect ckb2021 script should pass validation", t => {
+  validators.ValidateScript({
+    code_hash:
+      "0xa98c57135830e1b91345948df6c4b8870828199a786b26f09f7dec4bc27a73da",
+    args: "0x1234",
+    hash_type: "data1"
+  });
+
+  t.pass();
+})
+
 test("correct script with empty args", t => {
   validators.ValidateScript({
     code_hash:

@@ -48,7 +48,7 @@ function assertHexString(debugPath, string) {
 
 function assertHash(debugPath, hash) {
   assertHexString(debugPath, hash);
-  if (hash.length != 66) {
+  if (hash.length !== 66) {
     throw new Error(`${debugPath} must be a hex string of 66 bytes long!`);
   }
 }
@@ -75,7 +75,7 @@ export function ValidateScript(
   assertHash(`${debugPath}.code_hash`, script.code_hash);
   assertHexString(`${debugPath}.args`, script.args);
 
-  if (script.hash_type !== "data" && script.hash_type !== "type") {
+  if (script.hash_type !== "data" && script.hash_type !== "type" && script.hash_type !== "data1") {
     throw new Error(`${debugPath}.hash_type must be either data or type!`);
   }
 }
@@ -299,7 +299,7 @@ export function ValidateHeader(
     []
   );
   assertHexString(`${debugPath}.nonce`, header.nonce);
-  if (header.nonce.length != 34) {
+  if (header.nonce.length !== 34) {
     throw new Error(
       `${debugPath}.nonce must be a hex string of 34 bytes long!`
     );
@@ -308,7 +308,7 @@ export function ValidateHeader(
 
 function assertProposalShortId(debugPath, shortId) {
   assertHexString(debugPath, shortId);
-  if (shortId.length != 22) {
+  if (shortId.length !== 22) {
     throw new Error(`${debugPath} must be a hex string of 22 bytes long!`);
   }
 }
