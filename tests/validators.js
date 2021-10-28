@@ -20,7 +20,7 @@ test("concorect ckb2021 script should pass validation", t => {
   });
 
   t.pass();
-})
+});
 
 test("correct script with empty args", t => {
   validators.ValidateScript({
