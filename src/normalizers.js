@@ -203,7 +203,7 @@ export function NormalizeRawHeader(
     parent_hash: normalizeRawData(32),
     transactions_root: normalizeRawData(32),
     proposals_hash: normalizeRawData(32),
-    uncles_hash: normalizeRawData(32),
+    extra_hash: normalizeRawData(32),
     dao: normalizeRawData(32)
   });
 }
