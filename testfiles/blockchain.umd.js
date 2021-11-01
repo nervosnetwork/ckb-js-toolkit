@@ -144,6 +144,14 @@
       return this.view.buffer;
     }
 
+    toBigEndianBigUint64() {
+      return this.view.getBigUint64(0, false);
+    }
+
+    toLittleEndianBigUint64() {
+      return this.view.getBigUint64(0, true);
+    }
+
     static size() {
       return 8;
     }
@@ -326,7 +334,7 @@
 
     validate(compatible = false) {
       const offsets = verifyAndExtractOffsets(this.view, 0, true);
-      for (let i = 0; i < len(offsets) - 1; i++) {
+      for (let i = 0; i < offsets.length - 1; i++) {
         new Bytes(this.view.buffer.slice(offsets[i], offsets[i + 1]), { validate: false }).validate();
       }
     }
@@ -465,7 +473,7 @@
 
     validate(compatible = false) {
       const offsets = verifyAndExtractOffsets(this.view, 0, true);
-      for (let i = 0; i < len(offsets) - 1; i++) {
+      for (let i = 0; i < offsets.length - 1; i++) {
         new UncleBlock(this.view.buffer.slice(offsets[i], offsets[i + 1]), { validate: false }).validate();
       }
     }
@@ -503,7 +511,7 @@
 
     validate(compatible = false) {
       const offsets = verifyAndExtractOffsets(this.view, 0, true);
-      for (let i = 0; i < len(offsets) - 1; i++) {
+      for (let i = 0; i < offsets.length - 1; i++) {
         new Transaction(this.view.buffer.slice(offsets[i], offsets[i + 1]), { validate: false }).validate();
       }
     }
@@ -658,7 +666,7 @@
 
     validate(compatible = false) {
       const offsets = verifyAndExtractOffsets(this.view, 0, true);
-      for (let i = 0; i < len(offsets) - 1; i++) {
+      for (let i = 0; i < offsets.length - 1; i++) {
         new CellOutput(this.view.buffer.slice(offsets[i], offsets[i + 1]), { validate: false }).validate();
       }
     }
