@@ -1,16 +1,18 @@
 class BaseReader {
-  /**
-   * instanceof would be nice here, but when a user use multi version of Reader that may cause problem
-   * @example
-   * const { Reader } = require('ckb-js-toolkit'); // ckb-js-toolkit@0.100.1
-   * const { readSomething } = require('other-serializer-lib'); // dependent on ckb-js-toolkit@0.100.0
-   *
-   * readSomething() instanceof Reader; // false
-   *
-   * @type {boolean}
-   * @protected
-   */
-  __isByteLikeReader__ = true;
+  constructor() {
+    /**
+     * instanceof would be nice here, but when a user use multi version of Reader that may cause problem
+     * @example
+     * const { Reader } = require('ckb-js-toolkit'); // ckb-js-toolkit@0.100.1
+     * const { readSomething } = require('other-serializer-lib'); // dependent on ckb-js-toolkit@0.100.0
+     *
+     * readSomething() instanceof Reader; // false
+     *
+     * @type {boolean}
+     * @protected
+     */
+    this.__isByteLikeReader__ = true;
+  }
 
   static isReader(x) {
     if (x == null) return false;
