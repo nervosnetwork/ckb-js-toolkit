@@ -81,8 +81,6 @@ class HexStringReader extends BaseReader {
 }
 
 export class Reader extends BaseReader {
-  __isCKBReader__ = true;
-
   constructor(input) {
     super();
     if (
