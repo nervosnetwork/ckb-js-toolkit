@@ -64,7 +64,7 @@ export class Reader {
       return input;
     }
     if (typeof input === "string") {
-      if (!input.startsWith("0x") || input.length % 2 != 0) {
+      if (!input.startsWith("0x") || input.length % 2 !== 0) {
         throw new Error(
           "Hex string must start with 0x, and has even numbered length!"
         );
@@ -73,6 +73,10 @@ export class Reader {
     }
     if (input instanceof ArrayBuffer) {
       return new ArrayBufferReader(input);
+    }
+
+    if (input instanceof Uint8Array) {
+      return new ArrayBufferReader(Uint8Array.from(input).buffer);
     }
     throw new Error("Reader can only accept hex string or ArrayBuffer!");
   }
