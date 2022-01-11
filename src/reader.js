@@ -81,6 +81,10 @@ export class Reader {
     throw new Error("Reader can only accept hex string or ArrayBuffer!");
   }
 
+  static from(x) {
+    return new Reader(x);
+  }
+
   static fromRawString(string) {
     const buffer = new ArrayBuffer(string.length);
     const view = new DataView(buffer);
