@@ -1,5 +1,27 @@
-class ArrayBufferReader {
+class BaseReader {
+  /**
+   * instanceof would be nice here, but when a user use multi version of Reader that may cause problem
+   * @example
+   * const { Reader } = require('ckb-js-toolkit'); // ckb-js-toolkit@0.100.1
+   * const { readSomething } = require('other-serializer-lib'); // dependent on ckb-js-toolkit@0.100.0
+   *
+   * readSomething() instanceof Reader; // false
+   *
+   * @type {boolean}
+   * @protected
+   */
+  __isByteLikeReader__ = true;
+
+  static isReader(x) {
+    if (x == null) return false;
+    if (x instanceof BaseReader) return true;
+    return x.__isByteLikeReader__ === true;
+  }
+}
+
+class ArrayBufferReader extends BaseReader {
   constructor(buffer) {
+    super();
     this.view = new DataView(buffer);
   }
 
@@ -27,8 +49,9 @@ class ArrayBufferReader {
   }
 }
 
-class HexStringReader {
+class HexStringReader extends BaseReader {
   constructor(string) {
+    super();
     this.string = string;
   }
 
@@ -55,8 +78,11 @@ class HexStringReader {
   }
 }
 
-export class Reader {
+export class Reader extends BaseReader {
+  __isCKBReader__ = true;
+
   constructor(input) {
+    super();
     if (
       input instanceof HexStringReader ||
       input instanceof ArrayBufferReader
