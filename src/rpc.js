@@ -1,4 +1,4 @@
-import fetch from "cross-fetch";
+import { default as crossFetch } from "cross-fetch";
 import JSBI from "jsbi";
 
 function mergeOptions(overrideOptions, defaultOptions) {
@@ -17,7 +17,7 @@ const batchHandler = {
   get: (target, method, receiver) => {
     if (method === "send") {
       return async () => {
-        const response = await fetch(
+        const response = await target.fetch(
           target.uri,
           mergeOptions(
             {
@@ -64,7 +64,7 @@ const handler = {
     }
     return async (...params) => {
       const id = Math.round(Math.random() * 10000000);
-      const response = await fetch(
+      const response = await target.fetch(
         target.uri,
         mergeOptions(
           {
@@ -97,9 +97,10 @@ const handler = {
 };
 
 export class RPC {
-  constructor(uri, defaultOptions = {}) {
+  constructor(uri, defaultOptions = {}, fetch = crossFetch) {
     this.uri = uri;
     this.defaultOptions = defaultOptions;
+    this.fetch = fetch;
     return new Proxy(this, handler);
   }
 
