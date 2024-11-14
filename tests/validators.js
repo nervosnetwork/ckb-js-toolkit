@@ -59,6 +59,27 @@ test("script with invalid hash type", t => {
   });
 });
 
+test("script with data variants", t => {
+  validators.ValidateScript({
+    code_hash:
+      "0xa98c57135830e1b91345948df6c4b8870828199a786b26f09f7dec4bc27a73da",
+    args: "0x1234",
+    hash_type: "data2"
+  });
+  t.pass();
+});
+
+test("script with invalid data variants", t => {
+  t.throws(() => {
+    validators.ValidateScript({
+      code_hash:
+        "0xa98c57135830e1b91345948df6c4b8870828199a786b26f09f7dec4bc27a73da",
+      args: "0x1234",
+      hash_type: "dataf"
+    });
+  });
+});
+
 test("correct outpoint", t => {
   validators.ValidateOutPoint({
     tx_hash:

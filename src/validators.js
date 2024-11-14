@@ -75,7 +75,8 @@ export function ValidateScript(
   assertHash(`${debugPath}.code_hash`, script.code_hash);
   assertHexString(`${debugPath}.args`, script.args);
 
-  if (script.hash_type !== "data" && script.hash_type !== "type") {
+  const DATA_VARIANTS = /^data([1-9][0-9]*)?$/;
+  if (script.hash_type !== "type" && !DATA_VARIANTS.test(script.hash_type)) {
     throw new Error(`${debugPath}.hash_type must be either data or type!`);
   }
 }
